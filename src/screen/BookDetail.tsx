@@ -1,23 +1,22 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet, Touchable, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 import books from '../data/books.json';
-import { BookList, Books } from '../types/type';
+import { BookList,Books } from '../types/type';
 
-interface BookListScreenProps{
-  navigation: any;
-}
-
-const BookListScreen: React.FC<BookListScreenProps> = ({navigation}) => {
-  const bookData: BookList = books;
-
-  const handlePress = (course: string) =>{
-    navigation.navigate('Details', {course})
+interface BookDetailScreenProps {
+    route: any;
   }
+  
+const BookDetailScreen: React.FC<BookDetailScreenProps> = ({ route }) => {
+  const { course } = route.params;
+  const filteredBooks:BookList = books.filter((book: Books) => book.course === course);
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={bookData}
+      <Text style={styles.header}>Livros da Disciplina: {course}</Text>
+      
+      <FlatList 
+        data={filteredBooks}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }: { item: Books }) => (
           <View style={styles.bookItem}>
@@ -25,9 +24,6 @@ const BookListScreen: React.FC<BookListScreenProps> = ({navigation}) => {
             <Text>{item.author}</Text>
             <Text>{item.publisher}</Text>
             <Text>{item.year}</Text>
-            <TouchableOpacity onPress={() =>  handlePress(item.course)}>
-              <Text style={styles.course}>{item.course}</Text>
-            </TouchableOpacity>
           </View>
         )}
       />
@@ -39,20 +35,22 @@ const styles = StyleSheet.create({
   container: { 
     flex: 1, 
     padding: 10 
-},
+  },
+  header: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10
+  },
   bookItem: { 
     padding: 10, 
     marginVertical: 5, 
     backgroundColor: '#f2f2f2', 
     borderRadius: 5 
-},
+  },
   title: { 
     fontWeight: 'bold', 
     fontSize: 16 
-},
-  course: {
-    textDecorationLine: 'underline'
-}
+  }
 });
 
-export default BookListScreen;
+export default BookDetailScreen;
